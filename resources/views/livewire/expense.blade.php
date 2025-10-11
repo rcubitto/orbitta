@@ -89,8 +89,8 @@
                 </flux:chart>
             </div>
             <flux:card class="overflow-hidden min-w-[12rem]">
-                <flux:text class="mb-3">Top 5 Categories</flux:text>
-                @foreach ($this->current->groupBy('category')->map->sum('amount')->sortDesc()->take(5) as $category => $sum)
+                <flux:text class="mb-3">Categories</flux:text>
+                @foreach ($this->current->groupBy('category')->map->sum('amount')->sortDesc() as $category => $sum)
                     <div class="flex space-between gap-8">
                         <span class="flex-1 text-sm">{{ $category }}</span>
                         <span class="text-sm tabular-nums">${{ number_format($sum / 100) }}</span>
