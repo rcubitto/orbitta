@@ -33,7 +33,9 @@ class Expense extends Component
 
     public function render()
     {
-        return view('livewire.expense');
+        return view('livewire.expense', [
+            'expenses' => ExpenseModel::latest()->get(),
+        ]);
     }
 
     public function save(): void

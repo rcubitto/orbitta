@@ -11,4 +11,11 @@ class Expense extends Model
     use HasFactory;
 
     protected static $unguarded = true;
+
+    protected function casts(): array
+    {
+        return [
+            'date' => 'immutable_datetime',
+        ];
+    }
 }
