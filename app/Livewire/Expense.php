@@ -44,7 +44,7 @@ class Expense extends Component
             ->remove(',')
             ->explode('.');
 
-        $amountInCents = (int) $whole.str($decimals)->take(2);
+        $amountInCents = (int) $whole.str($decimals)->take(2)->padRight(2, '0');
 
         ExpenseModel::create([
             'user_id' => auth()->id(),
