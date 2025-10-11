@@ -1,5 +1,5 @@
 <div class="flex gap-20">
-    <div class="w-1/3 space-y-6">
+    <div class="w-1/3 2xl:w-1/6 space-y-6">
         <flux:field>
             <flux:label>Date</flux:label>
             <flux:date-picker wire:model="date" />
