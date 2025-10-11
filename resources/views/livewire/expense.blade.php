@@ -57,7 +57,7 @@
         </flux:button>
     </div>
     <div class="flex-1">
-        <div class="mb-8 flex gap-10">
+        <div class="mb-16 flex gap-10">
             <flux:card class="overflow-hidden min-w-[12rem]">
                 <flux:text>Total {{ today()->format('M, Y') }}</flux:text>
                 <flux:heading size="xl" class="mt-2 tabular-nums">

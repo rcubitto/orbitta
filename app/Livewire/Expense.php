@@ -59,11 +59,8 @@ class Expense extends Component
     {
         $this->validate();
 
-        [$whole, $decimals] = str($this->amount)
-            ->remove(',')
-            ->explode('.');
-
-        $amountInCents = (int) $whole.str($decimals)->take(2)->padRight(2, '0');
+        $parts = str($this->amount)->remove(',')->explode('.');
+        $amountInCents = (int) $parts[0].str($parts[1] ?? '')->take(2)->padRight(2, '0');
 
         ExpenseModel::create([
             'user_id' => auth()->id(),
