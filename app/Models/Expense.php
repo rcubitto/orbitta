@@ -18,4 +18,23 @@ class Expense extends Model
             'date' => 'immutable_date',
         ];
     }
+
+    public function categoryBadgeColor(): string
+    {
+        return match ($this->category) {
+            'Dogs' => 'zinc',
+            'Drugs' => 'red',
+            'Entertainment' => 'orange',
+            'Extras' => 'amber',
+            'Groceries' => 'yellow',
+            'Healthcare' => 'lime',
+            'Household' => 'green',
+            'Housing' => 'emerald',
+            'Online Services' => 'teal',
+            'Other' => 'cyan',
+            'Taxes & Accounting' => 'sky',
+            'Transport' => 'blue',
+            'Utilities' => 'indigo',
+        };
+    }
 }

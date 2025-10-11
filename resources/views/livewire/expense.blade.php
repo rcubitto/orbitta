@@ -114,7 +114,7 @@
                         <flux:table.cell>{{ $expense->description }}</flux:table.cell>
                         <flux:table.cell class="text-right" variant="strong">${{ number_format($expense->amount / 100) }}</flux:table.cell>
                         <flux:table.cell>
-                            <flux:badge variant="pill">{{ $expense->category }}</flux:badge>
+                            <flux:badge variant="pill" :color="$expense->categoryBadgeColor()">{{ $expense->category }}</flux:badge>
                         </flux:table.cell>
                         <flux:table.cell>
                             <flux:badge variant="pill">{{ $expense->type }}</flux:badge>
