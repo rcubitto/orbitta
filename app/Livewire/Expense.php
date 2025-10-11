@@ -34,7 +34,7 @@ class Expense extends Component
     public function render()
     {
         return view('livewire.expense', [
-            'expenses' => ExpenseModel::latest()->get(),
+            'expenses' => ExpenseModel::where('user_id', auth()->id())->latest()->get(),
         ]);
     }
 
