@@ -6,6 +6,7 @@ use Illuminate\Support\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use App\Models\Expense as ExpenseModel;
 
 #[Layout('components.layouts.app', ['title' => 'Expenses'])]
 class Expense extends Component
@@ -22,7 +23,12 @@ class Expense extends Component
     public string $type;
     #[Validate('required')]
     public string $paymentMethod;
-    public ?string $notes;
+    public ?string $notes = null;
+
+    public function mount(): void
+    {
+        $this->date = today();
+    }
 
     public function render()
     {
@@ -33,7 +39,25 @@ class Expense extends Component
     {
         $this->validate();
 
-        // create
+        [$whole, $decimals] = str($this->amount)
+            ->remove(',')
+            ->explode('.');
+
+        $amountInCents = (int) $whole.str($decimals)->take(2);
+
+        ExpenseModel::create([
+            'user_id' => auth()->id(),
+            'date' => $this->date,
+            'description' => $this->description,
+            'amount' => $amountInCents,
+            'category' => $this->category,
+            'type' => $this->type,
+            'payment_method' => $this->paymentMethod,
+            'notes' => $this->notes,
+        ]);
+
+        $this->reset('description', 'amount', 'category', 'type', 'paymentMethod', 'notes');
+        $this->date = today();
 
         // notify
     }

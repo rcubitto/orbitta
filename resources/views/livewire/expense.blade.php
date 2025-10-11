@@ -1,8 +1,8 @@
 <div class="space-y-6">
     <flux:field>
         <flux:label>Date</flux:label>
-        <flux:date-picker />
-        <flux:error wire:model="date" />
+        <flux:date-picker wire:model="date" />
+        <flux:error name="date" />
     </flux:field>
 
     <flux:input label="Description" wire:model="description" />
