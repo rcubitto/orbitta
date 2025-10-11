@@ -2,11 +2,12 @@
 
 namespace App\Livewire;
 
+use App\Models\Expense as ExpenseModel;
+use Flux\Flux;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
-use App\Models\Expense as ExpenseModel;
 
 #[Layout('components.layouts.app', ['title' => 'Expenses'])]
 class Expense extends Component
@@ -59,6 +60,6 @@ class Expense extends Component
         $this->reset('description', 'amount', 'category', 'type', 'paymentMethod', 'notes');
         $this->date = today();
 
-        // notify
+        Flux::toast(variant: 'success', text: 'Your changes have been saved.');
     }
 }
