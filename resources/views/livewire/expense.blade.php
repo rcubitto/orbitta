@@ -1,5 +1,5 @@
-<div class="grid grid-cols-2 gap-8">
-    <div class="space-y-6">
+<div class="flex gap-20">
+    <div class="w-1/3 space-y-6 grid grid-cols-2 gap-4">
         <flux:field>
             <flux:label>Date</flux:label>
             <flux:date-picker wire:model="date" />
@@ -44,17 +44,19 @@
             <flux:select.option>PayPal</flux:select.option>
         </flux:select>
 
-        <flux:textarea
-            label="Notes"
-            placeholder="No lettuce, tomato, or onion..."
-            wire:model="notes"
-        />
+        <div class="col-span-2">
+            <flux:textarea
+                label="Notes"
+                placeholder="No lettuce, tomato, or onion..."
+                wire:model="notes"
+            />
+        </div>
 
         <flux:button variant="primary" wire:click="save">
             Submit
         </flux:button>
     </div>
-    <div>
+    <div class="flex-1">
         <flux:table>
             <flux:table.columns>
                 <flux:table.column>Date</flux:table.column>

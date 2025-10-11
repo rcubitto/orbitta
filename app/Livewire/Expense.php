@@ -19,11 +19,11 @@ class Expense extends Component
     #[Validate('required', 'numeric')]
     public string $amount;
     #[Validate(['required'])]
-    public string $category;
+    public string $category = '';
     #[Validate('required')]
-    public string $type;
+    public string $type = '';
     #[Validate('required')]
-    public string $paymentMethod;
+    public string $paymentMethod = '';
     public ?string $notes = null;
 
     public function mount(): void
