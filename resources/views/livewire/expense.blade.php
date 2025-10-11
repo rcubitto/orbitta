@@ -57,7 +57,7 @@
         </flux:button>
     </div>
     <div class="flex-1">
-        <flux:table>
+        <flux:table :paginate="$expenses">
             <flux:table.columns>
                 <flux:table.column>Date</flux:table.column>
                 <flux:table.column>Description</flux:table.column>
@@ -74,11 +74,23 @@
                     <flux:table.row>
                         <flux:table.cell>{{ $expense->date->format('M j, Y') }}</flux:table.cell>
                         <flux:table.cell>{{ $expense->description }}</flux:table.cell>
-                        <flux:table.cell>${{ number_format($expense->amount / 100, decimals: 2) }}</flux:table.cell>
-                        <flux:table.cell>{{ $expense->category }}</flux:table.cell>
-                        <flux:table.cell>{{ $expense->type }}</flux:table.cell>
-                        <flux:table.cell>{{ $expense->payment_method }}</flux:table.cell>
-                        <flux:table.cell>{{ $expense->notes }}</flux:table.cell>
+                        <flux:table.cell class="text-right" variant="strong">${{ number_format($expense->amount / 100) }}</flux:table.cell>
+                        <flux:table.cell>
+                            <flux:badge variant="pill">{{ $expense->category }}</flux:badge>
+                        </flux:table.cell>
+                        <flux:table.cell>
+                            <flux:badge variant="pill">{{ $expense->type }}</flux:badge>
+                        </flux:table.cell>
+                        <flux:table.cell>
+                            <flux:badge variant="pill">{{ $expense->payment_method }}</flux:badge>
+                        </flux:table.cell>
+                        <flux:table.cell>
+                            @if ($expense->notes)
+                                <flux:tooltip :content="$expense->notes">
+                                    <flux:icon.chat-bubble-left-ellipsis class="text-amber-500" />
+                                </flux:tooltip>
+                            @endif
+                        </flux:table.cell>
                         <flux:table.cell>{{ $expense->created_at->diffForHumans() }}</flux:table.cell>
                     </flux:table.row>
                 @endforeach

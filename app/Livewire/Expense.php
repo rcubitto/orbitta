@@ -8,10 +8,13 @@ use Illuminate\Support\Carbon;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Livewire\WithPagination;
 
 #[Layout('components.layouts.app', ['title' => 'Expenses'])]
 class Expense extends Component
 {
+    use WithPagination;
+
     #[Validate('required', 'date')]
     public Carbon $date;
     #[Validate('required')]
@@ -34,7 +37,7 @@ class Expense extends Component
     public function render()
     {
         return view('livewire.expense', [
-            'expenses' => ExpenseModel::where('user_id', auth()->id())->latest()->get(),
+            'expenses' => ExpenseModel::where('user_id', auth()->id())->latest()->paginate(15),
         ]);
     }
 
