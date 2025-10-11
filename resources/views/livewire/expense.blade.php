@@ -11,19 +11,9 @@
         <flux:input label="Amount" mask:dynamic="$money($input)" icon="currency-dollar" wire:model="amount" />
 
         <flux:select label="Category" placeholder="Choose..." wire:model="category">
-            <flux:select.option>Dogs</flux:select.option>
-            <flux:select.option>Drugs</flux:select.option>
-            <flux:select.option>Entertainment</flux:select.option>
-            <flux:select.option>Extras</flux:select.option>
-            <flux:select.option>Groceries</flux:select.option>
-            <flux:select.option>Healthcare</flux:select.option>
-            <flux:select.option>Household</flux:select.option>
-            <flux:select.option>Housing</flux:select.option>
-            <flux:select.option>Online Services</flux:select.option>
-            <flux:select.option>Other</flux:select.option>
-            <flux:select.option>Taxes & Accounting</flux:select.option>
-            <flux:select.option>Transport</flux:select.option>
-            <flux:select.option>Utilities</flux:select.option>
+            @foreach ($this->categories as $category)
+                <flux:select.option>{{ $category }}</flux:select.option>
+            @endforeach
         </flux:select>
 
         <flux:select label="Type" placeholder="Choose..." wire:model="type">
@@ -58,17 +48,21 @@
     </div>
     <div class="flex-1">
         <div class="mb-16 flex gap-10">
-            <flux:card class="overflow-hidden min-w-[12rem]">
-                <flux:text>Total {{ today()->format('M, Y') }}</flux:text>
-                <flux:heading size="xl" class="mt-2 tabular-nums">
-                    ${{
-                        number_format(\App\Models\Expense::query()
-                            ->whereMonth('date', today()->month)
-                            ->whereYear('date', today()->year)
-                            ->sum('amount') / 100)
-                    }}
-                </flux:heading>
-            </flux:card>
+            <div class="space-y-6">
+                <flux:card class="overflow-hidden min-w-[12rem]">
+                    <flux:text>Total ({{ today()->format('M') }})</flux:text>
+                    <flux:heading size="xl" class="mt-2 tabular-nums">
+                        ${{ number_format($total = $this->current->sum('amount') / 100) }}
+                    </flux:heading>
+                </flux:card>
+                <flux:card class="overflow-hidden min-w-[12rem]">
+                    <flux:text class="mb-3">One-Time ({{ today()->format('M') }})</flux:text>
+                    <flux:heading size="xl" class="mt-2 tabular-nums">
+                        ${{ number_format($oneTime = $this->current->where('type', 'One-Time')->sum('amount') / 100) }}
+                    </flux:heading>
+                    <span class="text-zinc-300 text-sm">{{ number_format($oneTime / $total * 100, decimals: 2) }}%</span>
+                </flux:card>
+            </div>
             <div class="w-1/2">
                 <flux:chart wire:model="data" class="aspect-3/1">
                     <flux:chart.svg>
@@ -94,6 +88,15 @@
                     </flux:chart.tooltip>
                 </flux:chart>
             </div>
+            <flux:card class="overflow-hidden min-w-[12rem]">
+                <flux:text class="mb-3">Top 5 Categories</flux:text>
+                @foreach ($this->current->groupBy('category')->map->sum('amount')->sortDesc()->take(5) as $category => $sum)
+                    <div class="flex space-between gap-8">
+                        <span class="flex-1 text-sm">{{ $category }}</span>
+                        <span class="text-sm tabular-nums">${{ number_format($sum / 100) }}</span>
+                    </div>
+                @endforeach
+            </flux:card>
         </div>
         <flux:table :paginate="$expenses">
             <flux:table.columns>

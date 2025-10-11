@@ -4,7 +4,9 @@ namespace App\Livewire;
 
 use App\Models\Expense as ExpenseModel;
 use Flux\Flux;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
@@ -53,6 +55,36 @@ class Expense extends Component
         return view('livewire.expense', [
             'expenses' => ExpenseModel::where('user_id', auth()->id())->latest()->paginate(15),
         ]);
+    }
+
+    #[Computed]
+    public function current(): Collection
+    {
+        return ExpenseModel::where('user_id', auth()->id())
+            ->whereMonth('date', today()->month)
+            ->whereYear('date', today()->year)
+            ->latest()
+            ->get();
+    }
+
+    #[Computed]
+    public function categories(): array
+    {
+        return [
+            'Dogs',
+            'Drugs',
+            'Entertainment',
+            'Extras',
+            'Groceries',
+            'Healthcare',
+            'Household',
+            'Housing',
+            'Online Services',
+            'Other',
+            'Taxes & Accounting',
+            'Transport',
+            'Utilities',
+        ];
     }
 
     public function save(): void
