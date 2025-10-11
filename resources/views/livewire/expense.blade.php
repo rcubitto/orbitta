@@ -57,6 +57,19 @@
         </flux:button>
     </div>
     <div class="flex-1">
+        <div class="mb-8">
+            <flux:card class="overflow-hidden">
+                <flux:text>Total {{ today()->format('M, Y') }}</flux:text>
+                <flux:heading size="xl" class="mt-2 tabular-nums">
+                    ${{
+                        number_format(\App\Models\Expense::query()
+                            ->whereMonth('date', today()->month)
+                            ->whereYear('date', today()->year)
+                            ->sum('amount') / 100)
+                    }}
+                </flux:heading>
+            </flux:card>
+        </div>
         <flux:table :paginate="$expenses">
             <flux:table.columns>
                 <flux:table.column>Date</flux:table.column>
@@ -72,7 +85,7 @@
             <flux:table.rows>
                 @foreach ($expenses as $expense)
                     <flux:table.row>
-                        <flux:table.cell>{{ $expense->date->format('M j, Y') }}</flux:table.cell>
+                        <flux:table.cell>{{ $expense->date->toDateString() }}</flux:table.cell>
                         <flux:table.cell>{{ $expense->description }}</flux:table.cell>
                         <flux:table.cell class="text-right" variant="strong">${{ number_format($expense->amount / 100) }}</flux:table.cell>
                         <flux:table.cell>
