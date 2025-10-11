@@ -29,9 +29,23 @@ class Expense extends Component
     public string $paymentMethod = '';
     public ?string $notes = null;
 
+    public $data;
+
     public function mount(): void
     {
         $this->date = today();
+
+        $this->data = ExpenseModel::where('user_id', auth()->id())
+                ->whereMonth('date', today()->month)
+                ->whereYear('date', today()->year)
+                ->select('date')
+                ->selectRaw('sum(amount) as sum')
+                ->groupBy('date')
+                ->get()
+                ->map(fn ($attributes) => [
+                    'date' => $attributes->date->toDateString(),
+                    'amount' => $attributes->sum / 100,
+                ])->toArray();
     }
 
     public function render()

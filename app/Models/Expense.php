@@ -15,7 +15,7 @@ class Expense extends Model
     protected function casts(): array
     {
         return [
-            'date' => 'immutable_datetime',
+            'date' => 'immutable_date',
         ];
     }
 }

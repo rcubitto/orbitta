@@ -57,8 +57,8 @@
         </flux:button>
     </div>
     <div class="flex-1">
-        <div class="mb-8">
-            <flux:card class="overflow-hidden">
+        <div class="mb-8 flex gap-10">
+            <flux:card class="overflow-hidden min-w-[12rem]">
                 <flux:text>Total {{ today()->format('M, Y') }}</flux:text>
                 <flux:heading size="xl" class="mt-2 tabular-nums">
                     ${{
@@ -69,6 +69,31 @@
                     }}
                 </flux:heading>
             </flux:card>
+            <div class="w-1/2">
+                <flux:chart wire:model="data" class="aspect-3/1">
+                    <flux:chart.svg>
+                        <flux:chart.line field="amount" class="text-pink-500 dark:text-pink-400" />
+                        <flux:chart.point field="amount" class="text-pink-400 dark:text-pink-400" />
+
+                        <flux:chart.axis axis="x" field="date">
+                            <flux:chart.axis.line />
+                            <flux:chart.axis.tick />
+                        </flux:chart.axis>
+
+                        <flux:chart.axis axis="y">
+                            <flux:chart.axis.grid />
+                            <flux:chart.axis.tick />
+                        </flux:chart.axis>
+
+                        <flux:chart.cursor />
+                    </flux:chart.svg>
+
+                    <flux:chart.tooltip>
+                        <flux:chart.tooltip.heading field="date" :format="['year' => 'numeric', 'month' => 'numeric', 'day' => 'numeric']" />
+                        <flux:chart.tooltip.value field="amount" label="Amount" />
+                    </flux:chart.tooltip>
+                </flux:chart>
+            </div>
         </div>
         <flux:table :paginate="$expenses">
             <flux:table.columns>
