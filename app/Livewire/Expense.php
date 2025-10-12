@@ -17,6 +17,7 @@ class Expense extends Component
 {
     use WithPagination;
 
+    public ?string $externalId = null;
     #[Validate('required', 'date')]
     public Carbon $date;
     #[Validate('required')]
@@ -93,6 +94,7 @@ class Expense extends Component
 
         ExpenseModel::create([
             'user_id' => auth()->id(),
+            'external_id' => filled($this->externalId) ? $this->externalId : null,
             'date' => $this->date,
             'description' => $this->description,
             'amount' => to_cents($this->amount),
@@ -102,7 +104,7 @@ class Expense extends Component
             'notes' => $this->notes,
         ]);
 
-        $this->reset('description', 'amount', 'category', 'type', 'paymentMethod', 'notes');
+        $this->reset('externalId', 'description', 'amount', 'category', 'type', 'paymentMethod', 'notes');
         $this->date = today();
 
         Flux::toast(variant: 'success', text: 'Your changes have been saved.');

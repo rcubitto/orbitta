@@ -1,9 +1,10 @@
 <div class="flex gap-20">
     <div class="w-1/3 2xl:w-1/6 space-y-6">
+        <flux:input label="External ID" wire:model="externalId" />
+
         <flux:field>
             <flux:label>Date</flux:label>
-            <flux:date-picker wire:model="date" />
-            <flux:error name="date" />
+            <flux:date-picker wire:model="date" max="today" />
         </flux:field>
 
         <flux:input label="Description" wire:model="description" />
@@ -60,7 +61,7 @@
                     <flux:heading size="xl" class="mt-2 tabular-nums">
                         ${{ number_format($oneTime = $this->current->where('type', 'One-Time')->sum('amount') / 100) }}
                     </flux:heading>
-                    <span class="text-zinc-300 text-sm">{{ number_format($oneTime / $total * 100, decimals: 2) }}%</span>
+                    <span class="text-zinc-300 text-sm">{{ number_format($total ? ($oneTime / $total * 100) : 0, decimals: 2) }}%</span>
                 </flux:card>
             </div>
             <div class="w-1/2">
