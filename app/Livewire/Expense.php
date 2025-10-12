@@ -153,7 +153,7 @@ class Expense extends Component
             'externalId' => $expense->external_id,
             'date' => Carbon::parse($expense->date),
             'description' => $expense->description,
-            'amount' => $expense->amount / 100,
+            'amount' => number_format($expense->amount / 100, 0),
             'category' => $expense->category,
             'type' => $expense->type,
             'paymentMethod' => $expense->payment_method,

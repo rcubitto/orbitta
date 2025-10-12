@@ -49,7 +49,10 @@ it('creates a new expense', function () {
 });
 
 it('edits an expense', function () {
-    $expense = ExpenseModel::factory()->create();
+    $expense = ExpenseModel::factory()->create([
+        'external_id' => fake()->uuid(),
+        'amount' => 3000000, // $30,000
+    ]);
 
     $this->assertDatabaseCount(ExpenseModel::class, 1);
 
@@ -59,6 +62,14 @@ it('edits an expense', function () {
         ->assertSet('editing', null)
         ->call('edit', expense: $expense)
         ->assertSet('editing', $expense)
+        ->assertSet('externalId', $expense->external_id)
+        ->assertSet('date', $expense->date)
+        ->assertSet('description', $expense->description)
+        ->assertSet('amount', '30,000')
+        ->assertSet('category', $expense->category)
+        ->assertSet('type', $expense->type)
+        ->assertSet('paymentMethod', $expense->payment_method)
+        ->assertSet('notes', $expense->notes)
         // update
         ->fill($attributes = [
             'externalId' => '1234567890',
