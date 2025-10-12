@@ -101,14 +101,9 @@
         </div>
         <flux:table :paginate="$expenses">
             <flux:table.columns>
-                <flux:table.column>Date</flux:table.column>
-                <flux:table.column>Description</flux:table.column>
-                <flux:table.column>Amount</flux:table.column>
-                <flux:table.column>Category</flux:table.column>
-                <flux:table.column>Type</flux:table.column>
-                <flux:table.column>Method</flux:table.column>
-                <flux:table.column>Notes</flux:table.column>
-                <flux:table.column>Created At</flux:table.column>
+                @foreach (['Date', 'Description', 'Amount', 'Category', 'Type', 'Method', 'Notes', 'Created At'] as $column)
+                <flux:table.column>{{ $column }}</flux:table.column>
+                @endforeach
             </flux:table.columns>
 
             <flux:table.rows>
@@ -129,7 +124,7 @@
                         <flux:table.cell>
                             @if ($expense->notes)
                                 <flux:tooltip :content="$expense->notes">
-                                    <flux:icon.chat-bubble-left-ellipsis class="text-amber-500" />
+                                    <flux:icon.chat-bubble-left-ellipsis class="text-amber-400" />
                                 </flux:tooltip>
                             @endif
                         </flux:table.cell>
