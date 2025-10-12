@@ -12,27 +12,21 @@
         <flux:input label="Amount" mask:dynamic="$money($input)" icon="currency-dollar" wire:model="amount" />
 
         <flux:select label="Category" placeholder="Choose..." wire:model="category">
-            @foreach ($this->categories as $category)
+            @foreach (self::categories() as $category)
                 <flux:select.option>{{ $category }}</flux:select.option>
             @endforeach
         </flux:select>
 
         <flux:select label="Type" placeholder="Choose..." wire:model="type">
-            <flux:select.option>Recurring (Fixed)</flux:select.option>
-            <flux:select.option>Recurring (Variable)</flux:select.option>
-            <flux:select.option>One-Time</flux:select.option>
-            <flux:select.option>Installment</flux:select.option>
+            @foreach (self::types() as $type)
+                <flux:select.option>{{ $type }}</flux:select.option>
+            @endforeach
         </flux:select>
 
         <flux:select label="Payment Method" placeholder="Choose..." wire:model="paymentMethod">
-            <flux:select.option>VISA</flux:select.option>
-            <flux:select.option>Master</flux:select.option>
-            <flux:select.option>MP</flux:select.option>
-            <flux:select.option>Cash</flux:select.option>
-            <flux:select.option>Bank Transfer</flux:select.option>
-            <flux:select.option>Auto Debit</flux:select.option>
-            <flux:select.option>PagoMisCuentas</flux:select.option>
-            <flux:select.option>PayPal</flux:select.option>
+            @foreach (self::paymentMethods() as $paymentMethod)
+                <flux:select.option>{{ $paymentMethod }}</flux:select.option>
+            @endforeach
         </flux:select>
 
         <div class="col-span-2">
@@ -43,8 +37,11 @@
             />
         </div>
 
-        <flux:button variant="primary" wire:click="save">
-            Submit
+        <flux:button variant="primary" wire:click="save" class="mr-2">
+            {{ $this->editing ? 'Update' : 'Submit' }}
+        </flux:button>
+        <flux:button variant="subtle" wire:click="clear">
+            Clear
         </flux:button>
     </div>
     <div class="flex-1">
@@ -104,11 +101,12 @@
                 @foreach (['Date', 'Description', 'Amount', 'Category', 'Type', 'Method', 'Notes', 'Created At'] as $column)
                 <flux:table.column>{{ $column }}</flux:table.column>
                 @endforeach
+                <flux:table.column />
             </flux:table.columns>
 
             <flux:table.rows>
                 @foreach ($expenses as $expense)
-                    <flux:table.row>
+                    <flux:table.row class="{{ $expense->is($editing) ? 'bg-zinc-700' : '' }}">
                         <flux:table.cell>{{ $expense->date->toDateString() }}</flux:table.cell>
                         <flux:table.cell>{{ $expense->description }}</flux:table.cell>
                         <flux:table.cell class="text-right" variant="strong">${{ number_format($expense->amount / 100) }}</flux:table.cell>
@@ -129,6 +127,19 @@
                             @endif
                         </flux:table.cell>
                         <flux:table.cell>{{ $expense->created_at->diffForHumans() }}</flux:table.cell>
+                        <flux:table.cell>
+                            <flux:dropdown>
+                                <flux:button variant="subtle" icon:trailing="ellipsis-horizontal" />
+
+                                <flux:menu>
+                                    <flux:menu.item wire:click="edit({{ $expense->id }})" icon="pencil">Edit</flux:menu.item>
+
+                                    <flux:menu.separator />
+
+                                    <flux:menu.item variant="danger" icon="trash">Delete</flux:menu.item>
+                                </flux:menu>
+                            </flux:dropdown>
+                        </flux:table.cell>
                     </flux:table.row>
                 @endforeach
             </flux:table.rows>

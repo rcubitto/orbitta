@@ -33,6 +33,7 @@ class Expense extends Component
     public ?string $notes = null;
 
     public $data;
+    public ?ExpenseModel $editing = null;
 
     public function mount(): void
     {
@@ -68,8 +69,7 @@ class Expense extends Component
             ->get();
     }
 
-    #[Computed]
-    public function categories(): array
+    public static function categories(): array
     {
         return [
             'Dogs',
@@ -88,25 +88,82 @@ class Expense extends Component
         ];
     }
 
+    public static function types(): array
+    {
+        return [
+            'Recurring (Fixed)',
+            'Recurring (Variable)',
+            'One-Time',
+            'Installment',
+        ];
+    }
+
+    public static function paymentMethods(): array
+    {
+        return [
+            'VISA',
+            'Master',
+            'MP',
+            'Cash',
+            'Bank Transfer',
+            'Auto Debit',
+            'PagoMisCuentas',
+            'PayPal',
+        ];
+    }
+
     public function save(): void
     {
         $this->validate();
 
-        ExpenseModel::create([
-            'user_id' => auth()->id(),
-            'external_id' => filled($this->externalId) ? $this->externalId : null,
-            'date' => $this->date,
-            'description' => $this->description,
-            'amount' => to_cents($this->amount),
-            'category' => $this->category,
-            'type' => $this->type,
-            'payment_method' => $this->paymentMethod,
-            'notes' => $this->notes,
-        ]);
+        if ($this->editing) {
+            $this->editing->update([
+                'external_id' => filled($this->externalId) ? $this->externalId : null,
+                'date' => $this->date,
+                'description' => $this->description,
+                'amount' => to_cents($this->amount),
+                'category' => $this->category,
+                'type' => $this->type,
+                'payment_method' => $this->paymentMethod,
+                'notes' => $this->notes,
+            ]);
+        } else {
+            ExpenseModel::create([
+                'user_id' => auth()->id(),
+                'external_id' => filled($this->externalId) ? $this->externalId : null,
+                'date' => $this->date,
+                'description' => $this->description,
+                'amount' => to_cents($this->amount),
+                'category' => $this->category,
+                'type' => $this->type,
+                'payment_method' => $this->paymentMethod,
+                'notes' => $this->notes,
+            ]);
+        }
 
-        $this->reset('externalId', 'description', 'amount', 'category', 'type', 'paymentMethod', 'notes');
-        $this->date = today();
-
+        $this->clear();
         Flux::toast(variant: 'success', text: 'Your changes have been saved.');
+    }
+
+    public function edit(ExpenseModel $expense)
+    {
+        $this->editing = $expense;
+
+        $this->fill([
+            'externalId' => $expense->external_id,
+            'date' => Carbon::parse($expense->date),
+            'description' => $expense->description,
+            'amount' => $expense->amount / 100,
+            'category' => $expense->category,
+            'type' => $expense->type,
+            'paymentMethod' => $expense->payment_method,
+            'notes' => $expense->notes,
+        ]);
+    }
+
+    public function clear()
+    {
+        $this->resetExcept('date', 'data');
+        $this->date = today();
     }
 }

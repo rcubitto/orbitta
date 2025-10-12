@@ -1,0 +1,105 @@
+<?php
+
+use App\Livewire\Expense;
+use App\Models\Expense as ExpenseModel;
+use App\Models\User;
+use Illuminate\Support\Carbon;
+use Livewire\Livewire;
+
+uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
+
+test('the component renders ok', function () {
+    Livewire::actingAs(User::factory()->create())
+        ->test(Expense::class)
+        ->assertStatus(200);
+});
+
+it('creates a new expense', function () {
+    $this->assertDatabaseEmpty(ExpenseModel::class);
+
+    Livewire::actingAs($user = User::factory()->create())
+        ->test(Expense::class)
+        ->fill($attributes = [
+            'externalId' => '123456789',
+            'date' => today(),
+            'description' => fake()->paragraph,
+            'amount' => '25,000.12',
+            'category' => 'Groceries',
+            'type' => 'One-Time',
+            'paymentMethod' => 'MP',
+        ])
+        ->call('save')
+        ->tap(fn () => $this->assertDatabaseHas(ExpenseModel::class, [
+            'external_id' => $attributes['externalId'],
+            'date' => $attributes['date'],
+            'description' => $attributes['description'],
+            'amount' => $attributes['amount'],
+            'category' => $attributes['category'],
+            'type' => $attributes['type'],
+            'payment_method' => $attributes['paymentMethod'],
+            'user_id' => $user->id,
+            'amount' => 2500012,
+            'notes' => null,
+        ]))
+        ->assertDispatched('toast-show',
+            duration: 5000,
+            slots: ['text' => 'Your changes have been saved.'],
+            dataset: ['variant' => 'success'],
+        );
+});
+
+it('edits an expense', function () {
+    $expense = ExpenseModel::factory()->create();
+
+    $this->assertDatabaseCount(ExpenseModel::class, 1);
+
+    Livewire::actingAs($expense->user)
+        ->test(Expense::class)
+        // edit
+        ->assertSet('editing', null)
+        ->call('edit', expense: $expense)
+        ->assertSet('editing', $expense)
+        // update
+        ->fill($attributes = [
+            'externalId' => '1234567890',
+            'date' => Carbon::yesterday(),
+            'description' => fake()->paragraph,
+            'amount' => '1,500.1',
+            'category' => 'Dogs',
+            'type' => 'One-Time',
+            'paymentMethod' => 'VISA',
+            'notes' => 'Random notes',
+        ])
+        ->call('save')
+        // assert
+        ->tap(function () use ($attributes, $expense) {
+            $this->assertDatabaseHas(ExpenseModel::class, [
+                'id' => $expense->id,
+                'external_id' => $attributes['externalId'],
+                'date' => $attributes['date'],
+                'description' => $attributes['description'],
+                'amount' => 150010,
+                'category' => $attributes['category'],
+                'type' => $attributes['type'],
+                'payment_method' => $attributes['paymentMethod'],
+                'user_id' => $expense->user_id,
+                'notes' => $attributes['notes'],
+            ]);
+
+            $this->assertDatabaseCount(ExpenseModel::class, 1);
+        })
+        ->assertSet('editing', null)
+        ->assertSet('externalId', null)
+        ->assertSet('date', today())
+        ->assertSet('description', null)
+        ->assertSet('amount', null)
+        ->assertSet('category', null)
+        ->assertSet('type', null)
+        ->assertSet('paymentMethod', null)
+        ->assertSet('notes', null)
+        ->assertDispatched('toast-show',
+            duration: 5000,
+            slots: ['text' => 'Your changes have been saved.'],
+            dataset: ['variant' => 'success'],
+        );
+});
