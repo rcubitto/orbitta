@@ -91,14 +91,11 @@ class Expense extends Component
     {
         $this->validate();
 
-        $parts = str($this->amount)->remove(',')->explode('.');
-        $amountInCents = (int) $parts[0].str($parts[1] ?? '')->take(2)->padRight(2, '0');
-
         ExpenseModel::create([
             'user_id' => auth()->id(),
             'date' => $this->date,
             'description' => $this->description,
-            'amount' => $amountInCents,
+            'amount' => to_cents($this->amount),
             'category' => $this->category,
             'type' => $this->type,
             'payment_method' => $this->paymentMethod,
