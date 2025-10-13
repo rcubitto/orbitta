@@ -97,20 +97,8 @@
                     </flux:table.cell>
                     <flux:table.cell>{{ $expense->created_at->diffForHumans() }}</flux:table.cell>
                     <flux:table.cell>
-                        <flux:dropdown>
-                            <flux:button variant="subtle" icon="ellipsis-horizontal" />
-
-                            <flux:menu>
-                                <flux:menu.item wire:click="
-                                    edit({{ $expense->id }});
-                                    Flux.modal('expense-form').show()
-                                " icon="pencil">Edit</flux:menu.item>
-
-                                <flux:menu.separator />
-
-                                <flux:menu.item variant="danger" icon="trash">Delete</flux:menu.item>
-                            </flux:menu>
-                        </flux:dropdown>
+                        <flux:button size="sm" variant="ghost" icon="pencil" icon-variant="outline" wire:click="edit({{ $expense->id }}); Flux.modal('expense-form').show()" />
+                        <flux:button size="sm" variant="ghost" icon="trash" icon-variant="outline" wire:click="delete({{ $expense->id }})" wire:confirm="Are you sure?" icon:class="text-red-400" />
                     </flux:table.cell>
                 </flux:table.row>
             @endforeach

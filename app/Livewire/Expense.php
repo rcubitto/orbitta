@@ -167,4 +167,9 @@ class Expense extends Component
         $this->resetExcept('date', 'data');
         $this->date = today();
     }
+
+    public function delete($id): void
+    {
+        dd($id);
+    }
 }
