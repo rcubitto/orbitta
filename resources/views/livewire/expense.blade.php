@@ -1,57 +1,4 @@
 <div>
-    {{-- Stats --}}
-    <div class="hidden gap-10">
-        <div class="space-y-6">
-            <flux:card class="overflow-hidden min-w-[12rem]">
-                <flux:text>Total ({{ today()->format('M') }})</flux:text>
-                <flux:heading size="xl" class="mt-2 tabular-nums">
-                    ${{ number_format($total = $this->current->sum('amount') / 100) }}
-                </flux:heading>
-            </flux:card>
-            <flux:card class="overflow-hidden min-w-[12rem]">
-                <flux:text class="mb-3">One-Time ({{ today()->format('M') }})</flux:text>
-                <flux:heading size="xl" class="mt-2 tabular-nums">
-                    ${{ number_format($oneTime = $this->current->where('type', 'One-Time')->sum('amount') / 100) }}
-                </flux:heading>
-                <span class="text-zinc-300 text-sm">{{ number_format($total ? ($oneTime / $total * 100) : 0, decimals: 2) }}%</span>
-            </flux:card>
-        </div>
-        <div class="w-1/2">
-            <flux:chart wire:model="data" class="aspect-3/1">
-                <flux:chart.svg>
-                    <flux:chart.line field="amount" class="text-pink-500 dark:text-pink-400" />
-                    <flux:chart.point field="amount" class="text-pink-400 dark:text-pink-400" />
-
-                    <flux:chart.axis axis="x" field="date">
-                        <flux:chart.axis.line />
-                        <flux:chart.axis.tick />
-                    </flux:chart.axis>
-
-                    <flux:chart.axis axis="y">
-                        <flux:chart.axis.grid />
-                        <flux:chart.axis.tick />
-                    </flux:chart.axis>
-
-                    <flux:chart.cursor />
-                </flux:chart.svg>
-
-                <flux:chart.tooltip>
-                    <flux:chart.tooltip.heading field="date" :format="['year' => 'numeric', 'month' => 'numeric', 'day' => 'numeric']" />
-                    <flux:chart.tooltip.value field="amount" label="Amount" />
-                </flux:chart.tooltip>
-            </flux:chart>
-        </div>
-        <flux:card class="overflow-hidden min-w-[12rem]">
-            <flux:text class="mb-3">Categories</flux:text>
-            @foreach ($this->current->groupBy('category')->map->sum('amount')->sortDesc() as $category => $sum)
-                <div class="flex space-between gap-8">
-                    <span class="flex-1 text-sm">{{ $category }}</span>
-                    <span class="text-sm tabular-nums">${{ number_format($sum / 100) }}</span>
-                </div>
-            @endforeach
-        </flux:card>
-    </div>
-
     <div class="flex items-center mb-8">
         <flux:heading size="xl">Expenses</flux:heading>
         <flux:separator vertical class="mx-4"/>
@@ -69,6 +16,16 @@
                 <flux:select.option value="{{ $preset->value }}">{{ $preset->label() }}</flux:select.option>
             @endforeach
         </flux:select>
+    </div>
+
+    {{-- Stats --}}
+    <div class="grid grid-cols-4 gap-10 mb-8">
+        @foreach ($stats as $label => $value)
+        <flux:card class="overflow-hidden min-w-[12rem]">
+            <flux:text>{{ $label }}</flux:text>
+            <flux:heading size="xl" class="mt-2 tabular-nums">{{ $value }}</flux:heading>
+        </flux:card>
+        @endforeach
     </div>
 
     {{-- Results --}}

@@ -58,21 +58,17 @@ class Expense extends Component
     public function render()
     {
         return view('livewire.expense', [
-            'expenses' => ExpenseModel::where('user_id', auth()->id())
-                ->whereBetween('date', $this->dateRangePreset->dates())
-                ->latest('date')
+            'expenses' => ($query = ExpenseModel::where('user_id', auth()->id())
+                ->whereBetween('date', $this->dateRangePreset->dates()))
+                ->clone()->latest('date')
                 ->paginate(15),
+            'stats' => [
+                'Expenses' => $query->clone()->count(),
+                'Total' => '$'.number_format($query->clone()->sum('amount') / 100),
+                'One-Time' => '$'.number_format($query->clone()->where('type', 'One-Time')->sum('amount') / 100),
+                'Groceries' => '$'.number_format($query->clone()->where('category', 'Groceries')->sum('amount') / 100),
+            ]
         ]);
-    }
-
-    #[Computed]
-    public function current(): Collection
-    {
-        return ExpenseModel::where('user_id', auth()->id())
-            ->whereMonth('date', today()->month)
-            ->whereYear('date', today()->year)
-            ->latest()
-            ->get();
     }
 
     public static function categories(): array
