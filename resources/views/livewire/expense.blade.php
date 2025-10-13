@@ -19,7 +19,7 @@
     </div>
 
     {{-- Stats --}}
-    <div class="grid grid-cols-4 gap-10 mb-8">
+    <div class="grid grid-cols-6 gap-10 mb-8">
         @foreach ($stats as $label => $value)
         <flux:card class="overflow-hidden min-w-[12rem]">
             <flux:text>{{ $label }}</flux:text>

@@ -67,6 +67,8 @@ class Expense extends Component
                 'Total' => '$'.number_format($query->clone()->sum('amount') / 100),
                 'One-Time' => '$'.number_format($query->clone()->where('type', 'One-Time')->sum('amount') / 100),
                 'Groceries' => '$'.number_format($query->clone()->where('category', 'Groceries')->sum('amount') / 100),
+                'Leisure' => '$'.number_format($query->clone()->where('category', 'Entertainment')->sum('amount') / 100),
+                'Drugs' => '$'.number_format($query->clone()->where('category', 'Drugs')->sum('amount') / 100),
             ]
         ]);
     }
