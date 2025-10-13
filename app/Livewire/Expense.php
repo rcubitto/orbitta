@@ -145,7 +145,7 @@ class Expense extends Component
         Flux::toast(variant: 'success', text: 'Your changes have been saved.');
     }
 
-    public function edit(ExpenseModel $expense)
+    public function edit(ExpenseModel $expense): void
     {
         $this->editing = $expense;
 
@@ -161,8 +161,9 @@ class Expense extends Component
         ]);
     }
 
-    public function clear()
+    public function clear(): void
     {
+        $this->resetValidation();
         $this->resetExcept('date', 'data');
         $this->date = today();
     }
