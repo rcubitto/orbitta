@@ -52,11 +52,23 @@
         </flux:card>
     </div>
 
-    <div class="flex items-center space-x-6 mb-8">
+    <div class="flex items-center mb-8">
         <flux:heading size="xl">Expenses</flux:heading>
+        <flux:separator vertical class="mx-4"/>
         <flux:modal.trigger name="expense-form">
             <flux:button icon="plus">New</flux:button>
         </flux:modal.trigger>
+        <flux:select variant="listbox" class="w-auto! ml-4" wire:model.live="dateRangePreset">
+            <x-slot name="trigger">
+                <flux:select.button>
+                    <flux:icon.funnel variant="micro" class="mr-2 text-zinc-400" />
+                    <flux:select.selected />
+                </flux:select.button>
+            </x-slot>
+            @foreach(\Flux\DateRangePreset::cases() as $preset)
+                <flux:select.option value="{{ $preset->value }}">{{ $preset->label() }}</flux:select.option>
+            @endforeach
+        </flux:select>
     </div>
 
     {{-- Results --}}
@@ -76,22 +88,22 @@
 
         <flux:table.rows>
             @foreach ($expenses as $expense)
-                <flux:table.row>
+                <flux:table.row :key="$expense->id">
                     <flux:table.cell>
                         <span class="text-zinc-500">#</span>
                         <span>{{ $expense->id }}</span>
                     </flux:table.cell>
-                    <flux:table.cell>{{ $expense->date->format('d/m') }}</flux:table.cell>
+                    <flux:table.cell>{{ $expense->date->format('M j, Y') }}</flux:table.cell>
                     <flux:table.cell>{{ $expense->description }}</flux:table.cell>
                     <flux:table.cell variant="strong">${{ number_format($expense->amount / 100) }}</flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge variant="pill" :color="$expense->categoryBadgeColor()">{{ $expense->category }}</flux:badge>
+                        <flux:badge :color="$expense->categoryBadgeColor()">{{ $expense->category }}</flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge variant="pill">{{ $expense->type }}</flux:badge>
+                        <flux:badge>{{ $expense->type }}</flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge variant="pill">{{ $expense->payment_method }}</flux:badge>
+                        <flux:badge>{{ $expense->payment_method }}</flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>
                         @if ($expense->notes)

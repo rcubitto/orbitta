@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Models\Expense as ExpenseModel;
+use Flux\DateRangePreset;
 use Flux\Flux;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
@@ -34,10 +35,12 @@ class Expense extends Component
 
     public $data;
     public ?ExpenseModel $editing = null;
+    public DateRangePreset $dateRangePreset;
 
     public function mount(): void
     {
         $this->date = today();
+        $this->dateRangePreset = DateRangePreset::ThisMonth;
 
         $this->data = ExpenseModel::where('user_id', auth()->id())
                 ->whereMonth('date', today()->month)
@@ -55,7 +58,10 @@ class Expense extends Component
     public function render()
     {
         return view('livewire.expense', [
-            'expenses' => ExpenseModel::where('user_id', auth()->id())->latest()->paginate(15),
+            'expenses' => ExpenseModel::where('user_id', auth()->id())
+                ->whereBetween('date', $this->dateRangePreset->dates())
+                ->latest('date')
+                ->paginate(15),
         ]);
     }
 
@@ -164,7 +170,7 @@ class Expense extends Component
     public function clear(): void
     {
         $this->resetValidation();
-        $this->resetExcept('date', 'data');
+        $this->resetExcept('date', 'data', 'dateRangePreset');
         $this->date = today();
     }
 
