@@ -52,7 +52,7 @@
         </flux:card>
     </div>
 
-    <div class="flex items-center space-x-4 mb-8">
+    <div class="flex items-center space-x-6 mb-8">
         <flux:heading size="xl">Expenses</flux:heading>
         <flux:modal.trigger name="expense-form">
             <flux:button icon="plus">New</flux:button>
@@ -62,9 +62,14 @@
     {{-- Results --}}
     <flux:table :paginate="$expenses">
         <flux:table.columns>
-            @foreach (['Date', 'Description', 'Amount', 'Category', 'Type', 'Method', 'Notes', 'Created At'] as $column)
-                <flux:table.column>{{ $column }}</flux:table.column>
-            @endforeach
+            <flux:table.column>Date</flux:table.column>
+            <flux:table.column>Description</flux:table.column>
+            <flux:table.column align="right">Amount</flux:table.column>
+            <flux:table.column align="center">Category</flux:table.column>
+            <flux:table.column>Type</flux:table.column>
+            <flux:table.column>Method</flux:table.column>
+            <flux:table.column>Notes</flux:table.column>
+            <flux:table.column>Created At</flux:table.column>
             <flux:table.column />
         </flux:table.columns>
 
@@ -73,8 +78,8 @@
                 <flux:table.row>
                     <flux:table.cell>{{ $expense->date->toDateString() }}</flux:table.cell>
                     <flux:table.cell>{{ $expense->description }}</flux:table.cell>
-                    <flux:table.cell class="text-right" variant="strong">${{ number_format($expense->amount / 100) }}</flux:table.cell>
-                    <flux:table.cell>
+                    <flux:table.cell class="text-right text-base!">${{ number_format($expense->amount / 100) }}</flux:table.cell>
+                    <flux:table.cell align="center">
                         <flux:badge variant="pill" :color="$expense->categoryBadgeColor()">{{ $expense->category }}</flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>
