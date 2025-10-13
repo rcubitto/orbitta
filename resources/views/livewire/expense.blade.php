@@ -62,10 +62,11 @@
     {{-- Results --}}
     <flux:table :paginate="$expenses">
         <flux:table.columns>
+            <flux:table.column>ID</flux:table.column>
             <flux:table.column>Date</flux:table.column>
             <flux:table.column>Description</flux:table.column>
-            <flux:table.column align="right">Amount</flux:table.column>
-            <flux:table.column align="center">Category</flux:table.column>
+            <flux:table.column>Amount</flux:table.column>
+            <flux:table.column>Category</flux:table.column>
             <flux:table.column>Type</flux:table.column>
             <flux:table.column>Method</flux:table.column>
             <flux:table.column>Notes</flux:table.column>
@@ -76,10 +77,14 @@
         <flux:table.rows>
             @foreach ($expenses as $expense)
                 <flux:table.row>
-                    <flux:table.cell>{{ $expense->date->toDateString() }}</flux:table.cell>
+                    <flux:table.cell>
+                        <span class="text-zinc-500">#</span>
+                        <span>{{ $expense->id }}</span>
+                    </flux:table.cell>
+                    <flux:table.cell>{{ $expense->date->format('d/m') }}</flux:table.cell>
                     <flux:table.cell>{{ $expense->description }}</flux:table.cell>
-                    <flux:table.cell class="text-right text-base!">${{ number_format($expense->amount / 100) }}</flux:table.cell>
-                    <flux:table.cell align="center">
+                    <flux:table.cell variant="strong">${{ number_format($expense->amount / 100) }}</flux:table.cell>
+                    <flux:table.cell>
                         <flux:badge variant="pill" :color="$expense->categoryBadgeColor()">{{ $expense->category }}</flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>
