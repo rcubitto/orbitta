@@ -54,7 +54,7 @@
                     <flux:table.cell>{{ $expense->description }}</flux:table.cell>
                     <flux:table.cell variant="strong">${{ number_format($expense->amount / 100) }}</flux:table.cell>
                     <flux:table.cell>
-                        <flux:badge :color="$expense->categoryBadgeColor()">{{ $expense->category }}</flux:badge>
+                        <flux:badge :color="$expense->categoryBadgeColor()">{{ $expense->category->name }}</flux:badge>
                     </flux:table.cell>
                     <flux:table.cell>
                         <flux:badge>{{ $expense->type }}</flux:badge>
@@ -91,11 +91,11 @@
             <flux:date-picker label="Date" wire:model="date" max="today" />
             <flux:input label="Description" wire:model="description" />
             <flux:input label="Amount" mask:dynamic="$money($input)" icon="currency-dollar" icon-variant="outline" wire:model="amount" />
-            <flux:select label="Category" placeholder="Choose..." wire:model="category">
+            <flux:select label="Category" placeholder="Choose..." wire:model="categoryId">
                 @foreach ($this->categories as $rootCategory)
                     <optgroup label="{{ $rootCategory->name }}">
                         @foreach ($rootCategory->children as $subcategory)
-                            <flux:select.option>{{ $subcategory->name }}</flux:select.option>
+                            <flux:select.option :value="$subcategory->id">{{ $subcategory->name }}</flux:select.option>
                         @endforeach
                     </optgroup>
                 @endforeach

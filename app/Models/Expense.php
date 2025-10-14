@@ -22,7 +22,7 @@ class Expense extends Model
 
     public function categoryBadgeColor(): string
     {
-        return match ($this->category) {
+        return match ($this->category->name) {
             'Dogs' => 'zinc',
             'Drugs' => 'red',
             'Treats' => 'orange',
@@ -42,5 +42,10 @@ class Expense extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 }

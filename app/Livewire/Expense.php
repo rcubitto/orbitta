@@ -2,6 +2,7 @@
 
 namespace App\Livewire;
 
+use App\Models\Category;
 use App\Models\Expense as ExpenseModel;
 use Flux\DateRangePreset;
 use Flux\Flux;
@@ -25,8 +26,8 @@ class Expense extends Component
     public string $description;
     #[Validate('required', 'numeric')]
     public string $amount;
-    #[Validate(['required'])]
-    public string $category = '';
+    #[Validate(['required', 'exists:categories,id'])]
+    public ?int $categoryId = null;
     #[Validate('required')]
     public string $type = '';
     #[Validate('required')]
@@ -66,17 +67,17 @@ class Expense extends Component
                 'Expenses' => $query->clone()->count(),
                 'Total' => '$'.number_format($query->clone()->sum('amount') / 100),
                 'One-Time' => '$'.number_format($query->clone()->where('type', 'One-Time')->sum('amount') / 100),
-                'Groceries' => '$'.number_format($query->clone()->where('category', 'Groceries')->sum('amount') / 100),
-                'Leisure' => '$'.number_format($query->clone()->whereIn('category', \App\Models\Category::whereRelation('parent', 'name', 'Leisure')->pluck('name'))->sum('amount') / 100),
-                'Extras' => '$'.number_format($query->clone()->whereIn('category', \App\Models\Category::whereRelation('parent', 'name', 'Extras')->pluck('name'))->sum('amount') / 100),
+                'Groceries' => '$'.number_format($query->clone()->where('category_id', Category::whereName('Groceries')->value('id'))->sum('amount') / 100),
+                'Leisure' => '$'.number_format($query->clone()->whereIn('category_id', Category::whereRelation('parent', 'name', 'Leisure')->pluck('id'))->sum('amount') / 100),
+                'Extras' => '$'.number_format($query->clone()->whereIn('category_id', Category::whereRelation('parent', 'name', 'Extras')->pluck('id'))->sum('amount') / 100),
             ]
         ]);
     }
 
     #[Computed]
-    public function categories()
+    public function categories(): Collection
     {
-        return \App\Models\Category::where('is_active', true)->doesntHave('parent')->with('children')->get();
+        return Category::where('is_active', true)->doesntHave('parent')->with('children')->get();
     }
 
     public static function types(): array
@@ -113,7 +114,7 @@ class Expense extends Component
                 'date' => $this->date,
                 'description' => $this->description,
                 'amount' => to_cents($this->amount),
-                'category' => $this->category,
+                'category_id' => $this->categoryId,
                 'type' => $this->type,
                 'payment_method' => $this->paymentMethod,
                 'notes' => $this->notes,
@@ -125,7 +126,7 @@ class Expense extends Component
                 'date' => $this->date,
                 'description' => $this->description,
                 'amount' => to_cents($this->amount),
-                'category' => $this->category,
+                'category_id' => $this->categoryId,
                 'type' => $this->type,
                 'payment_method' => $this->paymentMethod,
                 'notes' => $this->notes,
@@ -145,7 +146,7 @@ class Expense extends Component
             'date' => Carbon::parse($expense->date),
             'description' => $expense->description,
             'amount' => number_format($expense->amount / 100, 0),
-            'category' => $expense->category,
+            'categoryId' => $expense->category_id,
             'type' => $expense->type,
             'paymentMethod' => $expense->payment_method,
             'notes' => $expense->notes,

@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Expense;
+use App\Models\Category;
 use App\Models\Expense as ExpenseModel;
 use App\Models\User;
 use Illuminate\Support\Carbon;
@@ -24,17 +25,18 @@ it('creates a new expense', function () {
             'date' => today(),
             'description' => fake()->paragraph,
             'amount' => '25,000.12',
-            'category' => 'Groceries',
+            'categoryId' => Category::factory()->create()->id,
             'type' => 'One-Time',
             'paymentMethod' => 'MP',
         ])
         ->call('save')
+        ->assertHasNoErrors()
         ->tap(fn () => $this->assertDatabaseHas(ExpenseModel::class, [
             'external_id' => $attributes['externalId'],
             'date' => $attributes['date'],
             'description' => $attributes['description'],
             'amount' => $attributes['amount'],
-            'category' => $attributes['category'],
+            'category_id' => $attributes['categoryId'],
             'type' => $attributes['type'],
             'payment_method' => $attributes['paymentMethod'],
             'user_id' => $user->id,
@@ -66,7 +68,7 @@ it('edits an expense', function () {
         ->assertSet('date', $expense->date)
         ->assertSet('description', $expense->description)
         ->assertSet('amount', '30,000')
-        ->assertSet('category', $expense->category)
+        ->assertSet('categoryId', $expense->category_id)
         ->assertSet('type', $expense->type)
         ->assertSet('paymentMethod', $expense->payment_method)
         ->assertSet('notes', $expense->notes)
@@ -76,7 +78,7 @@ it('edits an expense', function () {
             'date' => Carbon::yesterday(),
             'description' => fake()->paragraph,
             'amount' => '1,500.1',
-            'category' => 'Dogs',
+            'categoryId' => Category::factory()->create()->id,
             'type' => 'One-Time',
             'paymentMethod' => 'VISA',
             'notes' => 'Random notes',
@@ -90,7 +92,7 @@ it('edits an expense', function () {
                 'date' => $attributes['date'],
                 'description' => $attributes['description'],
                 'amount' => 150010,
-                'category' => $attributes['category'],
+                'category_id' => $attributes['categoryId'],
                 'type' => $attributes['type'],
                 'payment_method' => $attributes['paymentMethod'],
                 'user_id' => $expense->user_id,
@@ -104,7 +106,7 @@ it('edits an expense', function () {
         ->assertSet('date', today())
         ->assertSet('description', null)
         ->assertSet('amount', null)
-        ->assertSet('category', null)
+        ->assertSet('categoryId', null)
         ->assertSet('type', null)
         ->assertSet('paymentMethod', null)
         ->assertSet('notes', null)
