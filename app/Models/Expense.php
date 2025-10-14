@@ -25,17 +25,17 @@ class Expense extends Model
         return match ($this->category) {
             'Dogs' => 'zinc',
             'Drugs' => 'red',
-            'Entertainment' => 'orange',
+            'Treats' => 'orange',
             'Extras' => 'amber',
             'Groceries' => 'yellow',
-            'Healthcare' => 'lime',
+            'Health Care' => 'lime',
             'Household' => 'green',
-            'Housing' => 'emerald',
             'Online Services' => 'teal',
             'Other' => 'cyan',
             'Taxes & Accounting' => 'sky',
             'Transport' => 'blue',
-            'Utilities' => 'indigo',
+            'Bills & Utilities' => 'indigo',
+            default => 'zinc',
         };
     }
 

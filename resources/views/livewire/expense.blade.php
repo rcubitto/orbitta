@@ -92,8 +92,12 @@
             <flux:input label="Description" wire:model="description" />
             <flux:input label="Amount" mask:dynamic="$money($input)" icon="currency-dollar" icon-variant="outline" wire:model="amount" />
             <flux:select label="Category" placeholder="Choose..." wire:model="category">
-                @foreach (self::categories() as $category)
-                    <flux:select.option>{{ $category }}</flux:select.option>
+                @foreach ($this->categories as $rootCategory)
+                    <optgroup label="{{ $rootCategory->name }}">
+                        @foreach ($rootCategory->children as $subcategory)
+                            <flux:select.option>{{ $subcategory->name }}</flux:select.option>
+                        @endforeach
+                    </optgroup>
                 @endforeach
             </flux:select>
             <flux:select label="Type" placeholder="Choose..." wire:model="type">
@@ -117,7 +121,7 @@
                 <flux:modal.close>
                     <flux:button variant="ghost">Cancel</flux:button>
                 </flux:modal.close>
-                <flux:button variant="primary" wire:click="save">
+                <flux:button variant="primary" wire:click="save(); Flux.modal('expense-form').close()">
                     {{ $this->editing ? 'Update' : 'Submit' }}
                 </flux:button>
             </div>

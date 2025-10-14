@@ -67,29 +67,16 @@ class Expense extends Component
                 'Total' => '$'.number_format($query->clone()->sum('amount') / 100),
                 'One-Time' => '$'.number_format($query->clone()->where('type', 'One-Time')->sum('amount') / 100),
                 'Groceries' => '$'.number_format($query->clone()->where('category', 'Groceries')->sum('amount') / 100),
-                'Leisure' => '$'.number_format($query->clone()->where('category', 'Entertainment')->sum('amount') / 100),
-                'Drugs' => '$'.number_format($query->clone()->where('category', 'Drugs')->sum('amount') / 100),
+                'Leisure' => '$'.number_format($query->clone()->whereIn('category', \App\Models\Category::whereRelation('parent', 'name', 'Leisure')->pluck('name'))->sum('amount') / 100),
+                'Extras' => '$'.number_format($query->clone()->whereIn('category', \App\Models\Category::whereRelation('parent', 'name', 'Extras')->pluck('name'))->sum('amount') / 100),
             ]
         ]);
     }
 
-    public static function categories(): array
+    #[Computed]
+    public function categories()
     {
-        return [
-            'Dogs',
-            'Drugs',
-            'Entertainment',
-            'Extras',
-            'Groceries',
-            'Healthcare',
-            'Household',
-            'Housing',
-            'Online Services',
-            'Other',
-            'Taxes & Accounting',
-            'Transport',
-            'Utilities',
-        ];
+        return \App\Models\Category::where('is_active', true)->doesntHave('parent')->with('children')->get();
     }
 
     public static function types(): array
