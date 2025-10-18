@@ -71,8 +71,8 @@ class Expense extends Component
                 'Expenses' => $query->clone()->count(),
                 'Total' => '$'.number_format($query->clone()->sum('amount') / 100),
                 'One-Time' => '$'.number_format($query->clone()->where('type', 'One-Time')->sum('amount') / 100),
-                'Groceries' => '$'.number_format($query->clone()->where('category_id', Category::whereName('Groceries')->value('id'))->sum('amount') / 100),
-                'Leisure' => '$'.number_format($query->clone()->whereIn('category_id', Category::whereRelation('parent', 'name', 'Leisure')->pluck('id'))->sum('amount') / 100),
+                'Recurring' => '$'.number_format($query->clone()->whereLike('type', 'Recurring%')->sum('amount') / 100),
+                'Installments' => '$'.number_format($query->clone()->where('type', 'Installment')->sum('amount') / 100),
                 'Extras' => '$'.number_format($query->clone()->whereIn('category_id', Category::whereRelation('parent', 'name', 'Extras')->pluck('id'))->sum('amount') / 100),
             ]
         ]);
