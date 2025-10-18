@@ -13,6 +13,25 @@ class Categories extends Component
     public $name = '';
     public $parent = null;
 
+    public array $stateCategories = [];
+
+    public function mount(): void
+    {
+        $this->stateCategories = Category::whereNotNull('parent_id') // only modify children
+            ->where('is_active', true)
+            ->pluck('name', 'id')
+            ->toArray();
+    }
+
+    public function updatedStateCategories($value, $id)
+    {
+        Category::find($id)->update([
+            'name' => $value
+        ]);
+
+        Flux::toast(variant: 'success', text: 'Your changes have been saved.');
+    }
+
     public function render()
     {
         return view('livewire.categories', [

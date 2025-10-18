@@ -16,9 +16,9 @@
                         @if ($category->children->isNotEmpty())
                         <ul class="mt-2 space-y-1">
                             @foreach ($category->children as $subcategory)
-                                <li class="flex items-center space-x-2">
+                                <li class="flex items-center space-x-2 hover:bg-zinc-600">
                                     <flux:icon.arrow-right class="size-3 text-zinc-400" />
-                                    <flux:text>{{ $subcategory->name }}</flux:text>
+                                    <input type="text" wire:model.live.debounce="stateCategories.{{ $subcategory->id }}" class="text-white/70 text-sm" />
                                 </li>
                             @endforeach
                         </ul>
