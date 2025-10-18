@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
+use Livewire\Attributes\Session;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
 use Livewire\WithPagination;
@@ -20,14 +21,15 @@ class Expense extends Component
     use WithPagination;
 
     public ?string $externalId = null;
+    #[Session]
     #[Validate('required', 'date')]
-    public Carbon $date;
+    public ?Carbon $date = null;
     #[Validate('required')]
     public string $description;
     #[Validate('required', 'numeric')]
     public string $amount;
-    #[Validate(['required', 'exists:categories,id'])]
-    public ?int $categoryId = null;
+    #[Validate(['required', 'numeric', 'exists:categories,id'])]
+    public string $categoryId = '';
     #[Validate('required')]
     public string $type = '';
     #[Validate('required')]
@@ -38,9 +40,11 @@ class Expense extends Component
     public ?ExpenseModel $editing = null;
     public DateRangePreset $dateRangePreset;
 
+    #[Session]
+    public bool $keepAdding = false;
+
     public function mount(): void
     {
-        $this->date = today();
         $this->dateRangePreset = DateRangePreset::ThisMonth;
 
         $this->data = ExpenseModel::where('user_id', auth()->id())
@@ -61,7 +65,7 @@ class Expense extends Component
         return view('livewire.expense', [
             'expenses' => ($query = ExpenseModel::where('user_id', auth()->id())
                 ->whereBetween('date', $this->dateRangePreset->dates()))
-                ->clone()->latest('date')
+                ->clone()->latest('date')->latest('id')
                 ->paginate(15),
             'stats' => [
                 'Expenses' => $query->clone()->count(),
@@ -114,7 +118,7 @@ class Expense extends Component
                 'date' => $this->date,
                 'description' => $this->description,
                 'amount' => to_cents($this->amount),
-                'category_id' => $this->categoryId,
+                'category_id' => (int) $this->categoryId,
                 'type' => $this->type,
                 'payment_method' => $this->paymentMethod,
                 'notes' => $this->notes,
@@ -126,13 +130,14 @@ class Expense extends Component
                 'date' => $this->date,
                 'description' => $this->description,
                 'amount' => to_cents($this->amount),
-                'category_id' => $this->categoryId,
+                'category_id' => (int) $this->categoryId,
                 'type' => $this->type,
                 'payment_method' => $this->paymentMethod,
                 'notes' => $this->notes,
             ]);
         }
 
+        if (! $this->keepAdding || $this->editing) Flux::modals()->close();
         $this->clear();
         Flux::toast(variant: 'success', text: 'Your changes have been saved.');
     }
@@ -156,8 +161,8 @@ class Expense extends Component
     public function clear(): void
     {
         $this->resetValidation();
-        $this->resetExcept('date', 'data', 'dateRangePreset');
-        $this->date = today();
+        $this->resetExcept('date', 'data', 'dateRangePreset', 'keepAdding');
+        // $this->date = today();
     }
 
     public function delete($id): void

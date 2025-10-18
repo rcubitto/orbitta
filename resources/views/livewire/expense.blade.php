@@ -117,11 +117,17 @@
                 placeholder="No lettuce, tomato, or onion..."
                 wire:model="notes"
             />
+            @unless ($editing)
+            <flux:field variant="inline">
+                <flux:checkbox wire:model="keepAdding" />
+                <flux:label>Keep adding expenses</flux:label>
+            </flux:field>
+            @endunless
             <div class="text-right space-x-4">
                 <flux:modal.close>
                     <flux:button variant="ghost">Cancel</flux:button>
                 </flux:modal.close>
-                <flux:button variant="primary" wire:click="save(); Flux.modal('expense-form').close()">
+                <flux:button variant="primary" wire:click="save()">
                     {{ $this->editing ? 'Update' : 'Submit' }}
                 </flux:button>
             </div>
