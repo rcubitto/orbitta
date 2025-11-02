@@ -16,6 +16,11 @@
                 <flux:select.option value="{{ $preset->value }}">{{ $preset->label() }}</flux:select.option>
             @endforeach
         </flux:select>
+        <flux:select variant="listbox" multiple wire:model.live="filteredCategories" placeholder="Categories" class="w-auto! ml-4" clearable>
+            @foreach(\App\Models\Category::whereNotNull('parent_id')->pluck('name', 'id') as $id => $name)
+                <flux:select.option value="{{ $id }}">{{ $name }}</flux:select.option>
+            @endforeach
+        </flux:select>
     </div>
 
     {{-- Stats --}}
