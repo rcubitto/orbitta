@@ -12,6 +12,15 @@ if (! function_exists('to_cents')) {
     };
 }
 
+if (! function_exists('money')) {
+    function money(?int $cents): string
+    {
+        if (is_null($cents)) $cents = 0;
+
+        return '$'.number_format($cents / 100);
+    };
+}
+
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
         web: __DIR__.'/../routes/web.php',

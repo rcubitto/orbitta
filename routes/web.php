@@ -1,6 +1,7 @@
 <?php
 
 use App\Livewire\Categories;
+use App\Livewire\Dashboard;
 use App\Livewire\Expense;
 use App\Livewire\Settings\Appearance;
 use App\Livewire\Settings\Password;
@@ -14,7 +15,7 @@ Route::get('/', function () {
 })->name('home');
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+    Route::get('dashboard', Dashboard::class)->name('dashboard');
 
     Route::get('expenses', Expense::class)->name('expenses');
     Route::get('categories', Categories::class)->name('categories');
