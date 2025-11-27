@@ -21,6 +21,11 @@
                 <flux:select.option value="{{ $id }}">{{ $name }}</flux:select.option>
             @endforeach
         </flux:select>
+        <flux:select variant="listbox" multiple wire:model.live="filteredTypes" placeholder="Types" class="w-auto! ml-4" clearable>
+            @foreach(self::types() as $type)
+                <flux:select.option>{{ $type }}</flux:select.option>
+            @endforeach
+        </flux:select>
     </div>
 
     {{-- Stats --}}

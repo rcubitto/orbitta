@@ -36,31 +36,16 @@ class Expense extends Component
     public string $paymentMethod = '';
     public ?string $notes = null;
 
-    public $data;
     public ?ExpenseModel $editing = null;
-    public DateRangePreset $dateRangePreset;
+
+    #[Session]
+    public DateRangePreset $dateRangePreset = DateRangePreset::ThisMonth;
 
     #[Session]
     public bool $keepAdding = false;
 
-    public function mount(): void
-    {
-        $this->dateRangePreset = DateRangePreset::ThisMonth;
-
-        $this->data = ExpenseModel::where('user_id', auth()->id())
-                ->whereMonth('date', today()->month)
-                ->whereYear('date', today()->year)
-                ->select('date')
-                ->selectRaw('sum(amount) as sum')
-                ->groupBy('date')
-                ->get()
-                ->map(fn ($attributes) => [
-                    'date' => $attributes->date->toDateString(),
-                    'amount' => $attributes->sum / 100,
-                ])->toArray();
-    }
-
     public $filteredCategories;
+    public $filteredTypes;
 
     public function render()
     {
@@ -70,15 +55,18 @@ class Expense extends Component
                 ->when($this->filteredCategories, function ($query, $values) {
                     $query->whereIn('category_id', $values);
                 })
+                ->when($this->filteredTypes, function ($query, $values) {
+                    $query->whereIn('type', $values);
+                })
                 ->clone()->latest('date')->latest('id')
                 ->paginate(15),
             'stats' => [
                 'Expenses' => $query->clone()->count(),
                 'Total' => '$'.number_format($query->clone()->sum('amount') / 100),
-                'One-Time' => '$'.number_format($query->clone()->where('type', 'One-Time')->sum('amount') / 100),
-                'Recurring' => '$'.number_format($query->clone()->where('type', 'Recurring')->sum('amount') / 100),
-                'Installments' => '$'.number_format($query->clone()->where('type', 'Installment')->sum('amount') / 100),
-                'Extras' => '$'.number_format($query->clone()->whereIn('category_id', Category::whereRelation('parent', 'name', 'Extras')->pluck('id'))->sum('amount') / 100),
+                // 'One-Time' => '$'.number_format($query->clone()->where('type', 'One-Time')->sum('amount') / 100),
+                // 'Recurring' => '$'.number_format($query->clone()->where('type', 'Recurring')->sum('amount') / 100),
+                // 'Installments' => '$'.number_format($query->clone()->where('type', 'Installment')->sum('amount') / 100),
+                // 'Extras' => '$'.number_format($query->clone()->whereIn('category_id', Category::whereRelation('parent', 'name', 'Extras')->pluck('id'))->sum('amount') / 100),
             ]
         ]);
     }
@@ -165,7 +153,7 @@ class Expense extends Component
     public function clear(): void
     {
         $this->resetValidation();
-        $this->resetExcept('date', 'data', 'dateRangePreset', 'keepAdding');
+        $this->resetExcept('date', 'dateRangePreset', 'keepAdding');
         // $this->date = today();
     }
 
