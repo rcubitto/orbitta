@@ -28,16 +28,6 @@
         </flux:select>
     </div>
 
-    {{-- Stats --}}
-    <div class="grid grid-cols-6 gap-10 mb-8">
-        @foreach ($stats as $label => $value)
-        <flux:card class="overflow-hidden min-w-[12rem]">
-            <flux:text>{{ $label }}</flux:text>
-            <flux:heading size="xl" class="mt-2 tabular-nums">{{ $value }}</flux:heading>
-        </flux:card>
-        @endforeach
-    </div>
-
     {{-- Results --}}
     <flux:table :paginate="$expenses">
         <flux:table.columns>

@@ -60,14 +60,6 @@ class Expense extends Component
                 })
                 ->clone()->latest('date')->latest('id')
                 ->paginate(15),
-            'stats' => [
-                'Expenses' => $query->clone()->count(),
-                'Total' => '$'.number_format($query->clone()->sum('amount') / 100),
-                // 'One-Time' => '$'.number_format($query->clone()->where('type', 'One-Time')->sum('amount') / 100),
-                // 'Recurring' => '$'.number_format($query->clone()->where('type', 'Recurring')->sum('amount') / 100),
-                // 'Installments' => '$'.number_format($query->clone()->where('type', 'Installment')->sum('amount') / 100),
-                // 'Extras' => '$'.number_format($query->clone()->whereIn('category_id', Category::whereRelation('parent', 'name', 'Extras')->pluck('id'))->sum('amount') / 100),
-            ]
         ]);
     }
 
