@@ -50,15 +50,16 @@ class Expense extends Component
     public function render()
     {
         return view('livewire.expense', [
-            'expenses' => ($query = ExpenseModel::where('user_id', auth()->id())
-                ->whereBetween('date', $this->dateRangePreset->dates()))
+            'expenses' => ExpenseModel::where('user_id', auth()->id())
+                ->whereBetween('date', $this->dateRangePreset->dates(Carbon::parse('2025-01-01')))
                 ->when($this->filteredCategories, function ($query, $values) {
                     $query->whereIn('category_id', $values);
                 })
                 ->when($this->filteredTypes, function ($query, $values) {
                     $query->whereIn('type', $values);
                 })
-                ->clone()->latest('date')->latest('id')
+                ->latest('date')
+                ->latest('id')
                 ->paginate(15),
         ]);
     }
