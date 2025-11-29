@@ -110,7 +110,6 @@
                     <flux:select.option>{{ $paymentMethod }}</flux:select.option>
                 @endforeach
             </flux:select>
-            <flux:input autofocus label="External ID" wire:model="externalId" badge="optional" />
             <flux:textarea
                 label="Notes"
                 badge="optional"

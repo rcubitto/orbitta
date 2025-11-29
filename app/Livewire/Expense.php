@@ -20,7 +20,6 @@ class Expense extends Component
 {
     use WithPagination;
 
-    public ?string $externalId = null;
     #[Session]
     #[Validate('required', 'date')]
     public ?Carbon $date = null;
@@ -99,7 +98,6 @@ class Expense extends Component
 
         if ($this->editing) {
             $this->editing->update([
-                'external_id' => filled($this->externalId) ? $this->externalId : null,
                 'date' => $this->date,
                 'description' => $this->description,
                 'amount' => to_cents($this->amount),
@@ -111,7 +109,6 @@ class Expense extends Component
         } else {
             ExpenseModel::create([
                 'user_id' => auth()->id(),
-                'external_id' => filled($this->externalId) ? $this->externalId : null,
                 'date' => $this->date,
                 'description' => $this->description,
                 'amount' => to_cents($this->amount),
@@ -132,7 +129,6 @@ class Expense extends Component
         $this->editing = $expense;
 
         $this->fill([
-            'externalId' => $expense->external_id,
             'date' => Carbon::parse($expense->date),
             'description' => $expense->description,
             'amount' => number_format($expense->amount / 100, 0),

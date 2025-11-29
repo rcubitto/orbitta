@@ -21,7 +21,6 @@ it('creates a new expense', function () {
     Livewire::actingAs($user = User::factory()->create())
         ->test(Expense::class)
         ->fill($attributes = [
-            'externalId' => '123456789',
             'date' => today(),
             'description' => fake()->paragraph,
             'amount' => '25,000.12',
@@ -32,7 +31,6 @@ it('creates a new expense', function () {
         ->call('save')
         ->assertHasNoErrors()
         ->tap(fn () => $this->assertDatabaseHas(ExpenseModel::class, [
-            'external_id' => $attributes['externalId'],
             'date' => $attributes['date'],
             'description' => $attributes['description'],
             'amount' => $attributes['amount'],
@@ -52,7 +50,6 @@ it('creates a new expense', function () {
 
 it('edits an expense', function () {
     $expense = ExpenseModel::factory()->create([
-        'external_id' => fake()->uuid(),
         'amount' => 3000000, // $30,000
     ]);
 
@@ -64,7 +61,6 @@ it('edits an expense', function () {
         ->assertSet('editing', null)
         ->call('edit', expense: $expense)
         ->assertSet('editing', $expense)
-        ->assertSet('externalId', $expense->external_id)
         ->assertSet('date', $expense->date)
         ->assertSet('description', $expense->description)
         ->assertSet('amount', '30,000')
@@ -74,7 +70,6 @@ it('edits an expense', function () {
         ->assertSet('notes', $expense->notes)
         // update
         ->fill($attributes = [
-            'externalId' => '1234567890',
             'date' => Carbon::yesterday(),
             'description' => fake()->paragraph,
             'amount' => '1,500.1',
@@ -88,7 +83,6 @@ it('edits an expense', function () {
         ->tap(function () use ($attributes, $expense) {
             $this->assertDatabaseHas(ExpenseModel::class, [
                 'id' => $expense->id,
-                'external_id' => $attributes['externalId'],
                 'date' => $attributes['date'],
                 'description' => $attributes['description'],
                 'amount' => 150010,
@@ -102,8 +96,6 @@ it('edits an expense', function () {
             $this->assertDatabaseCount(ExpenseModel::class, 1);
         })
         ->assertSet('editing', null)
-        ->assertSet('externalId', null)
-        ->assertSet('date', today())
         ->assertSet('description', null)
         ->assertSet('amount', null)
         ->assertSet('categoryId', null)

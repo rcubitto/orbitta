@@ -22,7 +22,6 @@ class ExpenseFactory extends Factory
         return [
             'user_id' => User::factory(),
             'category_id' => Category::factory(),
-            'external_id' => null,
             'date' => today(),
             'description' => fake()->sentence,
             'amount' => to_cents('$'.number_format(fake()->randomFloat(2, 1_000, 50_000), 2)),
